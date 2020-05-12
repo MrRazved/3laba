@@ -1,0 +1,68 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdlib.h>
+#include <stdio.h>
+#include <iostream>
+
+int main() {
+setlocale(LC_ALL, "Russian");
+
+FILE* input, * output;
+char symb;
+int count = 0, size = 4;
+
+char* a = (char*)malloc(sizeof(char) * size); //массив для записи
+
+if ((input = fopen("input.txt", "r")) == NULL)
+{
+printf("Ошибка. Файл input.txt пустой.\n");
+return 0;
+}
+while (fscanf(input, "%c", &symb) != EOF)
+{
+if (count == size)
+{
+size *= 1.5;
+a = (char*)realloc(a, size * sizeof(char));
+}
+a[count] = symb;
+count += 1;
+}
+
+
+bool f = true;
+char* b = (char*)malloc(sizeof(char) * size);
+int sp = 0;
+
+for (int i = 0; i < count; i++) {
+if (a[i] == '(' || a[i] == '[' || a[i] == '{') {
+b[sp++] = a[i];
+
+}
+switch (a[i])
+{
+case ')': if (b[sp-1] != '(') { f = false; } else sp--; break;
+case ']': if (b[sp-1] != '[') { f = false; } else sp--; break;
+case '}': if (b[sp-1] != '{') { f = false; } else sp--; break;
+default:
+break;
+}
+}
+
+if (sp != 0)
+f = false;
+
+output = fopen("otput.txt", "w");
+
+if (f) {
+fprintf(output, "%s","Правильно");
+}
+else
+{
+fprintf(output, "%s", "Неправильно");
+}
+
+
+fclose(input);
+fclose(output);
+free(a);
+}
